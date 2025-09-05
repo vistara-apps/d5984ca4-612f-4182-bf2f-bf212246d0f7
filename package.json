@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@coinbase/onchainkit": "^0.38.19",
@@ -23,12 +24,30 @@
     "openai": "^4.0.0",
     "clsx": "^2.0.0",
     "lucide-react": "^0.400.0",
-    "pino-pretty": "^10.3.1"
+    "pino-pretty": "^10.3.1",
+    "@supabase/supabase-js": "^2.39.0",
+    "@privy-io/react-auth": "^1.75.0",
+    "@privy-io/wagmi": "^0.2.12",
+    "stripe": "^14.15.0",
+    "micro-cors": "^0.1.1",
+    "jose": "^5.2.0",
+    "zod": "^3.22.4",
+    "react-hot-toast": "^2.4.1",
+    "framer-motion": "^11.0.0",
+    "date-fns": "^3.3.1",
+    "uuid": "^9.0.1",
+    "@radix-ui/react-dialog": "^1.0.5",
+    "@radix-ui/react-select": "^2.0.0",
+    "@radix-ui/react-toast": "^1.1.5",
+    "@radix-ui/react-switch": "^1.0.3",
+    "class-variance-authority": "^0.7.0",
+    "tailwind-merge": "^2.2.1"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/uuid": "^9.0.8",
     "eslint": "^8",
     "eslint-config-next": "15.3.3",
     "eslint-config-prettier": "^10.1.1",

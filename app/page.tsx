@@ -1,23 +1,32 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useApp } from '@/lib/context/AppContext';
+import { usePrivy } from '@privy-io/react-auth';
 import { AppShell } from '@/components/AppShell';
 import { StateGuideCard } from '@/components/StateGuideCard';
 import { ScriptButton } from '@/components/ScriptButton';
 import { RecordButton } from '@/components/RecordButton';
 import { Modal } from '@/components/Modal';
 import { InputField } from '@/components/InputFields';
-import { ConnectWallet, Wallet } from '@coinbase/onchainkit/wallet';
-import { Name } from '@coinbase/onchainkit/identity';
 import { useMiniKit } from '@coinbase/onchainkit/minikit';
-import { SAMPLE_RIGHTS_DATA, US_STATES, INTERACTION_TYPES } from '@/lib/constants';
-import { StateRightsGuide, Language, InteractionType } from '@/lib/types';
-import { Shield, FileText, Mic, Settings2, Star, Users, TrendingUp } from 'lucide-react';
+import { US_STATES, INTERACTION_TYPES } from '@/lib/constants';
+import { Language, InteractionType } from '@/lib/types';
+import { Shield, FileText, Mic, Settings2, Star, Users, TrendingUp, ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
 export default function HomePage() {
   const { setFrameReady } = useMiniKit();
-  const [selectedState, setSelectedState] = useState<string>('california');
-  const [currentLanguage, setCurrentLanguage] = useState<Language>('english');
+  const { 
+    user, 
+    selectedState, 
+    currentLanguage, 
+    stateGuides, 
+    dispatch, 
+    createInteraction 
+  } = useApp();
+  const { authenticated, login } = usePrivy();
+  
   const [showStateModal, setShowStateModal] = useState(false);
   const [showRecordModal, setShowRecordModal] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
@@ -40,22 +49,40 @@ export default function HomePage() {
     return () => clearInterval(interval);
   }, [isRecording]);
 
-  const currentGuide = SAMPLE_RIGHTS_DATA[selectedState as keyof typeof SAMPLE_RIGHTS_DATA];
+  const currentGuide = stateGuides.find(guide => 
+    guide.state_name.toLowerCase() === selectedState.toLowerCase()
+  );
 
   const handleStartRecording = () => {
     setIsRecording(true);
     setRecordingTime(0);
   };
 
-  const handleStopRecording = () => {
+  const handleStopRecording = async () => {
     setIsRecording(false);
-    // Here you would typically save the recording and create a shareable card
-    console.log('Recording stopped', { recordingTime, interactionNotes, interactionType, location });
+    
+    if (authenticated && user) {
+      await createInteraction({
+        timestamp: new Date().toISOString(),
+        location: location || undefined,
+        notes: interactionNotes || undefined,
+        interaction_type: interactionType,
+      });
+    }
+    
+    // Reset form
+    setInteractionNotes('');
+    setLocation('');
+    setInteractionType('traffic_stop');
   };
 
   const handleStateChange = (state: string) => {
-    setSelectedState(state);
+    dispatch({ type: 'SET_SELECTED_STATE', payload: state });
     setShowStateModal(false);
+  };
+
+  const handleLanguageToggle = (language: Language) => {
+    dispatch({ type: 'SET_LANGUAGE', payload: language });
   };
 
   return (
@@ -67,20 +94,32 @@ export default function HomePage() {
           Know your rights, document your interactions, instantly.
         </p>
         
-        <div className="flex justify-center mb-6">
-          <Wallet>
-            <ConnectWallet className="btn-primary">
-              <Name />
-            </ConnectWallet>
-          </Wallet>
+        <div className="flex justify-center space-x-4 mb-6">
+          {!authenticated ? (
+            <button onClick={login} className="btn-primary">
+              Connect Wallet
+            </button>
+          ) : (
+            <>
+              <Link href="/dashboard" className="btn-primary flex items-center">
+                Dashboard
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Link>
+              <button 
+                onClick={() => setShowStateModal(true)}
+                className="btn-secondary"
+              >
+                📍 {selectedState}
+              </button>
+            </>
+          )}
         </div>
 
-        <button 
-          onClick={() => setShowStateModal(true)}
-          className="btn-secondary"
-        >
-          📍 Dashboard
-        </button>
+        {!authenticated && (
+          <p className="text-sm text-gray-400">
+            Connect your wallet to access personalized features and save your interactions
+          </p>
+        )}
       </div>
 
       {/* Stats Cards */}
@@ -145,7 +184,7 @@ export default function HomePage() {
               script=""
               variant="languageToggle"
               language={currentLanguage}
-              onLanguageToggle={setCurrentLanguage}
+              onLanguageToggle={handleLanguageToggle}
             />
           </div>
           
