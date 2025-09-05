@@ -1,0 +1,14 @@
+{
+  "name": "Pocket Rights",
+  "description": "Pocket Rights is a Base Mini App built with Zara.",
+  "image": "https://dummyimage.com/1200x628/0a0b0d/ffffff.png&text=OG",
+  "external_url": "https://d5984ca4-612f-4182-bf2f-bf212246d0f7.vercel.app",
+  "properties": {
+    "app": {
+      "name": "Pocket Rights",
+      "description": "Pocket Rights is a Base Mini App built with Zara.",
+      "url": "https://d5984ca4-612f-4182-bf2f-bf212246d0f7.vercel.app",
+      "icon": "https://0co.to/images/zara-2.png"
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "accountAssociation": {
+    "header": "",
+    "payload": "",
+    "signature": ""
+  },
+  "frame": {
+    "version": "1",
+    "name": "Pocket Rights",
+    "subtitle": "Built with Zara",
+    "description": "Pocket Rights is a Base Mini App built with Zara.",
+    "iconUrl": "https://0co.to/images/zara-2.png",
+    "homeUrl": "https://d5984ca4612f4182bf2fbf212246d0f7-jgl3.vercel.app",
+    "splashImageUrl": "https://d5984ca4612f4182bf2fbf212246d0f7-jgl3.vercel.app/splash.png",
+    "splashBackgroundColor": "#000000",
+    "heroImageUrl": "https://d5984ca4612f4182bf2fbf212246d0f7-jgl3.vercel.app/image.png",
+    "tagline": "Pocket Rights",
+    "screenshotUrls": [
+      "https://d5984ca4612f4182bf2fbf212246d0f7-jgl3.vercel.app/screenshot.png",
+      "https://d5984ca4612f4182bf2fbf212246d0f7-jgl3.vercel.app/screenshot.png"
+    ],
+    "primaryCategory": "social",
+    "tags": [
+      "base",
+      "miniapp",
+      "onchainkit"
+    ],
+    "webhookUrl": "https://d5984ca4612f4182bf2fbf212246d0f7-jgl3.vercel.app/api/webhook"
+  }
+}
