@@ -1,36 +1,45 @@
 import { createClient } from '@supabase/supabase-js';
 import { Database } from './database.types';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables');
-}
+// Environment variables
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 // Client-side Supabase client
-export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-  },
-});
+export const supabase = (() => {
+  if (!supabaseUrl || !supabaseAnonKey) {
+    // Return a mock client for build time
+    return null as any;
+  }
+  return createClient<Database>(supabaseUrl, supabaseAnonKey, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+    },
+  });
+})();
 
 // Server-side Supabase client with service role key (for API routes)
-export const supabaseAdmin = createClient<Database>(
-  supabaseUrl,
-  supabaseServiceKey,
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
+export const supabaseAdmin = (() => {
+  if (!supabaseUrl || !supabaseServiceKey) {
+    // Return a mock client for build time
+    return null as any;
   }
-);
+  return createClient<Database>(
+    supabaseUrl,
+    supabaseServiceKey,
+    {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    }
+  );
+})();
 
 // Helper function to get user from wallet address
-export async function getUserByWalletAddress(walletAddress: string) {
+export async function getUserByWalletAddress(walletAddress: string): Promise<Database['public']['Tables']['users']['Row'] | null> {
   const { data, error } = await supabaseAdmin
     .from('users')
     .select('*')
@@ -51,8 +60,8 @@ export async function upsertUser(userData: {
   subscription_status?: 'free' | 'premium';
   stripe_customer_id?: string;
 }) {
-  const { data, error } = await supabaseAdmin
-    .from('users')
+  const { data, error } = await (supabaseAdmin
+    .from('users') as any)
     .upsert(userData, {
       onConflict: 'wallet_address',
     })
@@ -104,8 +113,8 @@ export async function createInteractionLog(logData: {
   notes?: string;
   interaction_type: 'traffic_stop' | 'search' | 'arrest' | 'other';
 }) {
-  const { data, error } = await supabaseAdmin
-    .from('interaction_logs')
+  const { data, error } = await (supabaseAdmin
+    .from('interaction_logs') as any)
     .insert(logData)
     .select()
     .single();
@@ -145,8 +154,8 @@ export async function createShareableCard(cardData: {
   };
   generated_url?: string;
 }) {
-  const { data, error } = await supabaseAdmin
-    .from('shareable_cards')
+  const { data, error } = await (supabaseAdmin
+    .from('shareable_cards') as any)
     .insert(cardData)
     .select()
     .single();

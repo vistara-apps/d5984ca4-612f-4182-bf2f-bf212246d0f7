@@ -3,9 +3,15 @@ import OpenAI from 'openai';
 import { createShareableCard } from '@/lib/supabase';
 import { z } from 'zod';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!,
-});
+// Initialize OpenAI client only when needed
+function getOpenAIClient() {
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error('OPENAI_API_KEY environment variable is required');
+  }
+  return new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
+}
 
 const generateSummarySchema = z.object({
   interactionLogId: z.string(),
@@ -46,6 +52,7 @@ Keep the summary concise but comprehensive.`;
 
     const userPrompt = `Create a summary for a ${interactionType} that occurred on ${timestamp} in ${location}, ${state}.${notes ? ` Additional details: ${notes}` : ''}`;
 
+    const openai = getOpenAIClient();
     const completion = await openai.chat.completions.create({
       model: 'gpt-4',
       messages: [

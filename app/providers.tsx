@@ -11,9 +11,38 @@ import { AppProvider } from '@/lib/context/AppContext';
 const queryClient = new QueryClient();
 
 export function Providers({ children }: { children: ReactNode }) {
+  const privyAppId = process.env.NEXT_PUBLIC_PRIVY_APP_ID;
+  
+  // If no Privy app ID is available (e.g., during build), provide a fallback
+  if (!privyAppId) {
+    return (
+      <QueryClientProvider client={queryClient}>
+        <MiniKitProvider
+          chain={base}
+          apiKey={process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY || 'cdp_demo_key'}
+        >
+          <AppProvider>
+            {children}
+            <Toaster
+              position="top-right"
+              toastOptions={{
+                duration: 4000,
+                style: {
+                  background: '#1F2937',
+                  color: '#F9FAFB',
+                  border: '1px solid #374151',
+                },
+              }}
+            />
+          </AppProvider>
+        </MiniKitProvider>
+      </QueryClientProvider>
+    );
+  }
+
   return (
     <PrivyProvider
-      appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID!}
+      appId={privyAppId}
       config={{
         loginMethods: ['wallet'],
         appearance: {

@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { PrivyApi } from '@privy-io/server-auth';
+import { PrivyClient } from '@privy-io/server-auth';
 import { upsertUser, getUserByWalletAddress } from '@/lib/supabase';
 import { z } from 'zod';
 
-const privy = new PrivyApi(
+const privy = new PrivyClient(
   process.env.NEXT_PUBLIC_PRIVY_APP_ID!,
   process.env.PRIVY_APP_SECRET!
 );
@@ -20,17 +20,30 @@ export async function POST(request: NextRequest) {
     const { accessToken, walletAddress, selectedState } = authSchema.parse(body);
 
     // Verify the access token with Privy
-    const user = await privy.verifyAuthToken(accessToken);
+    const claims = await privy.verifyAuthToken(accessToken);
     
-    if (!user) {
+    if (!claims) {
       return NextResponse.json(
         { error: 'Invalid access token' },
         { status: 401 }
       );
     }
 
-    // Check if wallet address matches the authenticated user
-    const userWallet = user.wallet?.address?.toLowerCase();
+    // Get user data from Privy using the user ID from claims
+    const privyUser = await privy.getUser(claims.userId);
+    
+    if (!privyUser) {
+      return NextResponse.json(
+        { error: 'User not found' },
+        { status: 404 }
+      );
+    }
+
+    // Check if wallet address matches one of the user's linked wallets
+    const userWallet = privyUser.linkedAccounts
+      ?.find(account => account.type === 'wallet')
+      ?.address?.toLowerCase();
+    
     if (userWallet !== walletAddress.toLowerCase()) {
       return NextResponse.json(
         { error: 'Wallet address mismatch' },

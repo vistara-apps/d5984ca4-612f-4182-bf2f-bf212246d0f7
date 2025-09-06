@@ -2,9 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { supabaseAdmin } from '@/lib/supabase';
 import { headers } from 'next/headers';
+import { Database } from '@/lib/database.types';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-06-20',
+  apiVersion: '2023-10-16',
 });
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
@@ -12,7 +13,8 @@ const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 export async function POST(request: NextRequest) {
   try {
     const body = await request.text();
-    const signature = headers().get('stripe-signature');
+    const headersList = await headers();
+    const signature = headersList.get('stripe-signature');
 
     if (!signature) {
       return NextResponse.json(
@@ -44,8 +46,8 @@ export async function POST(request: NextRequest) {
 
           if (walletAddress) {
             // Update user subscription status
-            await supabaseAdmin
-              .from('users')
+            await (supabaseAdmin
+              .from('users') as any)
               .update({
                 subscription_status: 'premium',
                 stripe_customer_id: customerId,
@@ -70,8 +72,8 @@ export async function POST(request: NextRequest) {
           const walletAddress = customer.metadata.wallet_address;
           const status = subscription.status === 'active' ? 'premium' : 'free';
 
-          await supabaseAdmin
-            .from('users')
+          await (supabaseAdmin
+            .from('users') as any)
             .update({
               subscription_status: status,
               updated_at: new Date().toISOString(),
@@ -93,8 +95,8 @@ export async function POST(request: NextRequest) {
         if (customer && !customer.deleted && customer.metadata?.wallet_address) {
           const walletAddress = customer.metadata.wallet_address;
 
-          await supabaseAdmin
-            .from('users')
+          await (supabaseAdmin
+            .from('users') as any)
             .update({
               subscription_status: 'free',
               updated_at: new Date().toISOString(),
@@ -117,8 +119,8 @@ export async function POST(request: NextRequest) {
           const walletAddress = customer.metadata.wallet_address;
 
           // Optionally downgrade to free tier on payment failure
-          await supabaseAdmin
-            .from('users')
+          await (supabaseAdmin
+            .from('users') as any)
             .update({
               subscription_status: 'free',
               updated_at: new Date().toISOString(),

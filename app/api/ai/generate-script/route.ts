@@ -2,9 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { z } from 'zod';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!,
-});
+// Initialize OpenAI client only when needed
+function getOpenAIClient() {
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error('OPENAI_API_KEY environment variable is required');
+  }
+  return new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
+}
 
 const generateScriptSchema = z.object({
   scenario: z.enum(['traffic_stop', 'search', 'arrest', 'other']),
@@ -32,6 +38,7 @@ ${language === 'spanish' ? 'Respond in Spanish.' : 'Respond in English.'}`;
 
     const userPrompt = `Generate scripts for a ${scenario} scenario in ${state}${context ? `. Additional context: ${context}` : ''}`;
 
+    const openai = getOpenAIClient();
     const completion = await openai.chat.completions.create({
       model: 'gpt-4',
       messages: [
