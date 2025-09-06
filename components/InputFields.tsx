@@ -15,21 +15,40 @@ interface InputFieldProps {
   error?: string;
 }
 
-export const InputField = forwardRef<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement, InputFieldProps>(
-  ({ variant = 'text', label, placeholder, value, onChange, options, className, error, ...props }, ref) => {
+export const InputField = forwardRef<
+  HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement,
+  InputFieldProps
+>(
+  (
+    {
+      variant = 'text',
+      label,
+      placeholder,
+      value,
+      onChange,
+      options,
+      className,
+      error,
+      ...props
+    },
+    ref
+  ) => {
     const [isLocationLoading, setIsLocationLoading] = useState(false);
 
-    const baseClasses = 'w-full px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200';
+    const baseClasses =
+      'w-full px-4 py-3 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-lg text-white placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200';
 
     const handleLocationClick = async () => {
       if (variant !== 'locationPicker') return;
-      
+
       setIsLocationLoading(true);
       try {
-        const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-          navigator.geolocation.getCurrentPosition(resolve, reject);
-        });
-        
+        const position = await new Promise<GeolocationPosition>(
+          (resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject);
+          }
+        );
+
         const { latitude, longitude } = position.coords;
         onChange?.(`${latitude.toFixed(6)}, ${longitude.toFixed(6)}`);
       } catch (error) {
@@ -47,12 +66,12 @@ export const InputField = forwardRef<HTMLInputElement | HTMLTextAreaElement | HT
             {label}
           </label>
         )}
-        
+
         {variant === 'textarea' && (
           <textarea
             ref={ref as React.Ref<HTMLTextAreaElement>}
             value={value}
-            onChange={(e) => onChange?.(e.target.value)}
+            onChange={e => onChange?.(e.target.value)}
             placeholder={placeholder}
             className={cn(baseClasses, 'min-h-24 resize-none')}
             {...props}
@@ -64,15 +83,19 @@ export const InputField = forwardRef<HTMLInputElement | HTMLTextAreaElement | HT
             <select
               ref={ref as React.Ref<HTMLSelectElement>}
               value={value}
-              onChange={(e) => onChange?.(e.target.value)}
+              onChange={e => onChange?.(e.target.value)}
               className={cn(baseClasses, 'appearance-none pr-10')}
               {...props}
             >
               <option value="" disabled>
                 {placeholder || 'Select an option'}
               </option>
-              {options?.map((option) => (
-                <option key={option.value} value={option.value} className="text-gray-900">
+              {options?.map(option => (
+                <option
+                  key={option.value}
+                  value={option.value}
+                  className="text-gray-900"
+                >
                   {option.label}
                 </option>
               ))}
@@ -87,7 +110,7 @@ export const InputField = forwardRef<HTMLInputElement | HTMLTextAreaElement | HT
               ref={ref as React.Ref<HTMLInputElement>}
               type="text"
               value={value}
-              onChange={(e) => onChange?.(e.target.value)}
+              onChange={e => onChange?.(e.target.value)}
               placeholder={placeholder || 'Enter location or use GPS'}
               className={cn(baseClasses, 'pr-12')}
               {...props}
@@ -98,7 +121,9 @@ export const InputField = forwardRef<HTMLInputElement | HTMLTextAreaElement | HT
               disabled={isLocationLoading}
               className="absolute right-3 top-1/2 transform -translate-y-1/2 w-6 h-6 text-gray-300 hover:text-white transition-colors duration-200 disabled:opacity-50"
             >
-              <MapPin className={cn('w-5 h-5', isLocationLoading && 'animate-pulse')} />
+              <MapPin
+                className={cn('w-5 h-5', isLocationLoading && 'animate-pulse')}
+              />
             </button>
           </div>
         )}
@@ -108,16 +133,14 @@ export const InputField = forwardRef<HTMLInputElement | HTMLTextAreaElement | HT
             ref={ref as React.Ref<HTMLInputElement>}
             type="text"
             value={value}
-            onChange={(e) => onChange?.(e.target.value)}
+            onChange={e => onChange?.(e.target.value)}
             placeholder={placeholder}
             className={baseClasses}
             {...props}
           />
         )}
 
-        {error && (
-          <p className="text-sm text-red-400">{error}</p>
-        )}
+        {error && <p className="text-sm text-red-400">{error}</p>}
       </div>
     );
   }

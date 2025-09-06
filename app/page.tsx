@@ -1,29 +1,48 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useApp } from '@/lib/context/AppContext';
+import { usePrivy } from '@privy-io/react-auth';
 import { AppShell } from '@/components/AppShell';
 import { StateGuideCard } from '@/components/StateGuideCard';
 import { ScriptButton } from '@/components/ScriptButton';
 import { RecordButton } from '@/components/RecordButton';
 import { Modal } from '@/components/Modal';
 import { InputField } from '@/components/InputFields';
-import { ConnectWallet, Wallet } from '@coinbase/onchainkit/wallet';
-import { Name } from '@coinbase/onchainkit/identity';
 import { useMiniKit } from '@coinbase/onchainkit/minikit';
-import { SAMPLE_RIGHTS_DATA, US_STATES, INTERACTION_TYPES } from '@/lib/constants';
-import { StateRightsGuide, Language, InteractionType } from '@/lib/types';
-import { Shield, FileText, Mic, Settings2, Star, Users, TrendingUp } from 'lucide-react';
+import { US_STATES, INTERACTION_TYPES } from '@/lib/constants';
+import { Language, InteractionType } from '@/lib/types';
+import {
+  Shield,
+  FileText,
+  Mic,
+  Settings2,
+  Star,
+  Users,
+  TrendingUp,
+  ArrowRight,
+} from 'lucide-react';
+import Link from 'next/link';
 
 export default function HomePage() {
   const { setFrameReady } = useMiniKit();
-  const [selectedState, setSelectedState] = useState<string>('california');
-  const [currentLanguage, setCurrentLanguage] = useState<Language>('english');
+  const {
+    user,
+    selectedState,
+    currentLanguage,
+    stateGuides,
+    dispatch,
+    createInteraction,
+  } = useApp();
+  const { authenticated, login } = usePrivy();
+
   const [showStateModal, setShowStateModal] = useState(false);
   const [showRecordModal, setShowRecordModal] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const [interactionNotes, setInteractionNotes] = useState('');
-  const [interactionType, setInteractionType] = useState<InteractionType>('traffic_stop');
+  const [interactionType, setInteractionType] =
+    useState<InteractionType>('traffic_stop');
   const [location, setLocation] = useState('');
 
   useEffect(() => {
@@ -40,22 +59,40 @@ export default function HomePage() {
     return () => clearInterval(interval);
   }, [isRecording]);
 
-  const currentGuide = SAMPLE_RIGHTS_DATA[selectedState as keyof typeof SAMPLE_RIGHTS_DATA];
+  const currentGuide = stateGuides.find(
+    guide => guide.state_name.toLowerCase() === selectedState.toLowerCase()
+  );
 
   const handleStartRecording = () => {
     setIsRecording(true);
     setRecordingTime(0);
   };
 
-  const handleStopRecording = () => {
+  const handleStopRecording = async () => {
     setIsRecording(false);
-    // Here you would typically save the recording and create a shareable card
-    console.log('Recording stopped', { recordingTime, interactionNotes, interactionType, location });
+
+    if (authenticated && user) {
+      await createInteraction({
+        timestamp: new Date().toISOString(),
+        location: location || undefined,
+        notes: interactionNotes || undefined,
+        interaction_type: interactionType,
+      });
+    }
+
+    // Reset form
+    setInteractionNotes('');
+    setLocation('');
+    setInteractionType('traffic_stop');
   };
 
   const handleStateChange = (state: string) => {
-    setSelectedState(state);
+    dispatch({ type: 'SET_SELECTED_STATE', payload: state });
     setShowStateModal(false);
+  };
+
+  const handleLanguageToggle = (language: Language) => {
+    dispatch({ type: 'SET_LANGUAGE', payload: language });
   };
 
   return (
@@ -66,21 +103,34 @@ export default function HomePage() {
         <p className="text-gray-300 mb-6">
           Know your rights, document your interactions, instantly.
         </p>
-        
-        <div className="flex justify-center mb-6">
-          <Wallet>
-            <ConnectWallet className="btn-primary">
-              <Name />
-            </ConnectWallet>
-          </Wallet>
+
+        <div className="flex justify-center space-x-4 mb-6">
+          {!authenticated ? (
+            <button onClick={login} className="btn-primary">
+              Connect Wallet
+            </button>
+          ) : (
+            <>
+              <Link href="/dashboard" className="btn-primary flex items-center">
+                Dashboard
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Link>
+              <button
+                onClick={() => setShowStateModal(true)}
+                className="btn-secondary"
+              >
+                📍 {selectedState}
+              </button>
+            </>
+          )}
         </div>
 
-        <button 
-          onClick={() => setShowStateModal(true)}
-          className="btn-secondary"
-        >
-          📍 Dashboard
-        </button>
+        {!authenticated && (
+          <p className="text-sm text-gray-400">
+            Connect your wallet to access personalized features and save your
+            interactions
+          </p>
+        )}
       </div>
 
       {/* Stats Cards */}
@@ -89,7 +139,9 @@ export default function HomePage() {
           <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mx-auto mb-3">
             <Shield className="w-6 h-6 text-white" />
           </div>
-          <h3 className="text-lg font-semibold text-white mb-1">State Strict Rights</h3>
+          <h3 className="text-lg font-semibold text-white mb-1">
+            State Strict Rights
+          </h3>
           <p className="text-2xl font-bold text-white">30,28</p>
           <p className="text-sm text-gray-300">rights rights</p>
         </div>
@@ -98,14 +150,20 @@ export default function HomePage() {
           <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-teal-500 rounded-lg flex items-center justify-center mx-auto mb-3">
             <TrendingUp className="w-6 h-6 text-white" />
           </div>
-          <h3 className="text-lg font-semibold text-white mb-1">Record Rights.com</h3>
+          <h3 className="text-lg font-semibold text-white mb-1">
+            Record Rights.com
+          </h3>
           <p className="text-2xl font-bold text-white">20%</p>
           <p className="text-sm text-gray-300">Accuracy</p>
         </div>
 
         <div className="glass-card p-4">
-          <h4 className="font-medium text-white mb-3">State specific rights guide</h4>
-          <p className="text-sm text-gray-300 mb-3">Traffic violations, stop interactions</p>
+          <h4 className="font-medium text-white mb-3">
+            State specific rights guide
+          </h4>
+          <p className="text-sm text-gray-300 mb-3">
+            Traffic violations, stop interactions
+          </p>
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-300">Client by brass for</span>
@@ -127,8 +185,8 @@ export default function HomePage() {
       <div className="space-y-6">
         {/* Rights Guide */}
         {currentGuide && (
-          <StateGuideCard 
-            guide={currentGuide} 
+          <StateGuideCard
+            guide={currentGuide}
             variant="detailed"
             className="animate-fade-in"
           />
@@ -145,18 +203,20 @@ export default function HomePage() {
               script=""
               variant="languageToggle"
               language={currentLanguage}
-              onLanguageToggle={setCurrentLanguage}
+              onLanguageToggle={handleLanguageToggle}
             />
           </div>
-          
+
           <div className="space-y-3">
-            {currentGuide?.content.scripts[currentLanguage].map((script, index) => (
-              <ScriptButton
-                key={index}
-                script={script}
-                variant={index === 0 ? 'primary' : 'secondary'}
-              />
-            ))}
+            {currentGuide?.content.scripts[currentLanguage].map(
+              (script, index) => (
+                <ScriptButton
+                  key={index}
+                  script={script}
+                  variant={index === 0 ? 'primary' : 'secondary'}
+                />
+              )
+            )}
           </div>
         </div>
 
@@ -177,7 +237,7 @@ export default function HomePage() {
         variant="drawer"
       >
         <div className="space-y-3 max-h-64 overflow-y-auto">
-          {US_STATES.map((state) => (
+          {US_STATES.map(state => (
             <button
               key={state}
               onClick={() => handleStateChange(state.toLowerCase())}
@@ -205,10 +265,10 @@ export default function HomePage() {
             variant="select"
             label="Interaction Type"
             value={interactionType}
-            onChange={(value) => setInteractionType(value as InteractionType)}
+            onChange={value => setInteractionType(value as InteractionType)}
             options={INTERACTION_TYPES}
           />
-          
+
           <InputField
             variant="locationPicker"
             label="Location"
@@ -216,7 +276,7 @@ export default function HomePage() {
             onChange={setLocation}
             placeholder="Enter location or use GPS"
           />
-          
+
           <InputField
             variant="textarea"
             label="Notes"
@@ -224,7 +284,7 @@ export default function HomePage() {
             onChange={setInteractionNotes}
             placeholder="Add any additional details..."
           />
-          
+
           <div className="flex space-x-3">
             <button
               onClick={() => setShowRecordModal(false)}

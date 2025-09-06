@@ -11,15 +11,15 @@ interface StateGuideCardProps {
   className?: string;
 }
 
-export function StateGuideCard({ 
-  guide, 
-  variant = 'compact', 
+export function StateGuideCard({
+  guide,
+  variant = 'compact',
   onClick,
-  className 
+  className,
 }: StateGuideCardProps) {
   if (variant === 'compact') {
     return (
-      <div 
+      <div
         className={cn(
           'glass-card p-4 cursor-pointer hover:bg-opacity-15 transition-all duration-200',
           className
@@ -32,7 +32,9 @@ export function StateGuideCard({
               <Shield className="w-5 h-5 text-white" />
             </div>
             <div>
-              <h3 className="font-semibold text-white">{guide.state_name} Rights</h3>
+              <h3 className="font-semibold text-white">
+                {guide.state_name} Rights
+              </h3>
               <p className="text-sm text-gray-300">Tap to view guide</p>
             </div>
           </div>
@@ -50,7 +52,9 @@ export function StateGuideCard({
         </div>
         <div>
           <h2 className="text-xl font-semibold text-white">{guide.title}</h2>
-          <p className="text-gray-300">Last updated: {new Date(guide.last_updated).toLocaleDateString()}</p>
+          <p className="text-gray-300">
+            Last updated: {new Date(guide.last_updated).toLocaleDateString()}
+          </p>
         </div>
       </div>
 
@@ -58,7 +62,7 @@ export function StateGuideCard({
       <div className="space-y-3">
         <h3 className="text-lg font-medium text-green-400 flex items-center">
           <Shield className="w-5 h-5 mr-2" />
-          Do's
+          Do&apos;s
         </h3>
         <ul className="space-y-2">
           {guide.content.dos.map((item, index) => (
@@ -74,7 +78,7 @@ export function StateGuideCard({
       <div className="space-y-3">
         <h3 className="text-lg font-medium text-red-400 flex items-center">
           <AlertTriangle className="w-5 h-5 mr-2" />
-          Don'ts
+          Don&apos;ts
         </h3>
         <ul className="space-y-2">
           {guide.content.donts.map((item, index) => (

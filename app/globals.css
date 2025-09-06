@@ -6,10 +6,12 @@
   * {
     @apply border-gray-200;
   }
-  
+
   body {
     @apply bg-gradient-to-br from-indigo-900 via-purple-900 to-blue-900 text-white min-h-screen;
-    font-feature-settings: "rlig" 1, "calt" 1;
+    font-feature-settings:
+      'rlig' 1,
+      'calt' 1;
   }
 }
 
@@ -17,19 +19,19 @@
   .glass-card {
     @apply bg-white bg-opacity-10 backdrop-blur-lg border border-white border-opacity-20 rounded-lg shadow-card;
   }
-  
+
   .btn-primary {
     @apply bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-lg font-medium hover:from-purple-600 hover:to-pink-600 transition-all duration-200 shadow-button hover:shadow-lg;
   }
-  
+
   .btn-secondary {
     @apply bg-white bg-opacity-20 text-white px-6 py-3 rounded-lg font-medium hover:bg-opacity-30 transition-all duration-200 shadow-button backdrop-blur-sm;
   }
-  
+
   .metric-card {
     @apply glass-card p-4 hover:bg-opacity-15 transition-all duration-200;
   }
-  
+
   .floating-shapes {
     position: absolute;
     width: 100%;
@@ -37,12 +39,12 @@
     overflow: hidden;
     pointer-events: none;
   }
-  
+
   .shape {
     position: absolute;
     opacity: 0.1;
   }
-  
+
   .shape-1 {
     top: 10%;
     left: 10%;
@@ -51,7 +53,7 @@
     background: #fbbf24;
     transform: rotate(45deg);
   }
-  
+
   .shape-2 {
     top: 20%;
     right: 15%;
@@ -60,7 +62,7 @@
     background: #8b5cf6;
     border-radius: 50%;
   }
-  
+
   .shape-3 {
     bottom: 30%;
     left: 20%;
@@ -69,7 +71,7 @@
     background: #06b6d4;
     clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
   }
-  
+
   .shape-4 {
     top: 60%;
     right: 25%;
@@ -78,7 +80,7 @@
     background: #f59e0b;
     transform: rotate(45deg);
   }
-  
+
   .shape-5 {
     bottom: 20%;
     right: 10%;
@@ -87,7 +89,7 @@
     background: #10b981;
     border-radius: 50%;
   }
-  
+
   .shape-6 {
     top: 40%;
     left: 5%;

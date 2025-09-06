@@ -18,22 +18,22 @@ module.exports = {
         'text-secondary': 'hsl(210 10% 30%)',
       },
       borderRadius: {
-        'xs': '4px',
-        'sm': '6px',
-        'md': '10px',
-        'lg': '16px',
-        'xl': '24px',
+        xs: '4px',
+        sm: '6px',
+        md: '10px',
+        lg: '16px',
+        xl: '24px',
       },
       spacing: {
-        'xs': '4px',
-        'sm': '8px',
-        'md': '12px',
-        'lg': '20px',
-        'xl': '32px',
+        xs: '4px',
+        sm: '8px',
+        md: '12px',
+        lg: '20px',
+        xl: '32px',
       },
       boxShadow: {
-        'card': '0 4px 12px hsla(210, 10%, 0%, 0.08)',
-        'button': '0 2px 4px hsla(210, 10%, 0%, 0.06)',
+        card: '0 4px 12px hsla(210, 10%, 0%, 0.08)',
+        button: '0 2px 4px hsla(210, 10%, 0%, 0.06)',
       },
       animation: {
         'fade-in': 'fadeIn 0.25s cubic-bezier(0.22,1,0.36,1)',
@@ -52,4 +52,4 @@ module.exports = {
     },
   },
   plugins: [],
-}
+};

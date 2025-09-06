@@ -13,12 +13,12 @@ interface ScriptButtonProps {
   className?: string;
 }
 
-export function ScriptButton({ 
-  script, 
+export function ScriptButton({
+  script,
   variant = 'primary',
   language = 'english',
   onLanguageToggle,
-  className 
+  className,
 }: ScriptButtonProps) {
   const [copied, setCopied] = useState(false);
 
@@ -35,7 +35,9 @@ export function ScriptButton({
   if (variant === 'languageToggle') {
     return (
       <button
-        onClick={() => onLanguageToggle?.(language === 'english' ? 'spanish' : 'english')}
+        onClick={() =>
+          onLanguageToggle?.(language === 'english' ? 'spanish' : 'english')
+        }
         className={cn(
           'flex items-center space-x-2 px-3 py-2 rounded-lg bg-white bg-opacity-20 text-white hover:bg-opacity-30 transition-all duration-200',
           className
@@ -49,10 +51,12 @@ export function ScriptButton({
     );
   }
 
-  const baseClasses = 'flex items-center justify-between p-4 rounded-lg transition-all duration-200 group';
+  const baseClasses =
+    'flex items-center justify-between p-4 rounded-lg transition-all duration-200 group';
   const variantClasses = {
-    primary: 'bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600',
-    secondary: 'bg-white bg-opacity-20 text-white hover:bg-opacity-30'
+    primary:
+      'bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600',
+    secondary: 'bg-white bg-opacity-20 text-white hover:bg-opacity-30',
   };
 
   return (
