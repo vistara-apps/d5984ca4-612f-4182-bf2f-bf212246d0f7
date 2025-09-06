@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createInteractionLog, getUserInteractionLogs, getUserByWalletAddress } from '@/lib/supabase';
+import {
+  createInteractionLog,
+  getUserInteractionLogs,
+  getUserByWalletAddress,
+} from '@/lib/supabase';
 import { PrivyClient } from '@privy-io/server-auth';
 import { z } from 'zod';
 
@@ -33,7 +37,7 @@ export async function POST(request: NextRequest) {
 
     // Verify the access token with Privy
     const claims = await privy.verifyAuthToken(accessToken);
-    
+
     if (!claims) {
       return NextResponse.json(
         { error: 'Invalid access token' },
@@ -43,19 +47,16 @@ export async function POST(request: NextRequest) {
 
     // Get user data from Privy using the user ID from claims
     const privyUser = await privy.getUser(claims.userId);
-    
+
     if (!privyUser) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     // Check if wallet address matches one of the user's linked wallets
     const userWallet = privyUser.linkedAccounts
       ?.find(account => account.type === 'wallet')
       ?.address?.toLowerCase();
-    
+
     if (userWallet !== walletAddress.toLowerCase()) {
       return NextResponse.json(
         { error: 'Wallet address mismatch' },
@@ -66,10 +67,7 @@ export async function POST(request: NextRequest) {
     // Get user from database
     const user = await getUserByWalletAddress(walletAddress.toLowerCase());
     if (!user) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     // Create interaction log
@@ -88,7 +86,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Create interaction error:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
@@ -107,7 +105,9 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const walletAddress = searchParams.get('walletAddress');
-    const accessToken = request.headers.get('authorization')?.replace('Bearer ', '');
+    const accessToken = request.headers
+      .get('authorization')
+      ?.replace('Bearer ', '');
     const limit = parseInt(searchParams.get('limit') || '50');
 
     if (!walletAddress || !accessToken) {
@@ -119,7 +119,7 @@ export async function GET(request: NextRequest) {
 
     // Verify the access token with Privy
     const claims = await privy.verifyAuthToken(accessToken);
-    
+
     if (!claims) {
       return NextResponse.json(
         { error: 'Invalid access token' },
@@ -129,19 +129,16 @@ export async function GET(request: NextRequest) {
 
     // Get user data from Privy using the user ID from claims
     const privyUser = await privy.getUser(claims.userId);
-    
+
     if (!privyUser) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     // Check if wallet address matches one of the user's linked wallets
     const userWallet = privyUser.linkedAccounts
       ?.find(account => account.type === 'wallet')
       ?.address?.toLowerCase();
-    
+
     if (userWallet !== walletAddress.toLowerCase()) {
       return NextResponse.json(
         { error: 'Wallet address mismatch' },
@@ -152,10 +149,7 @@ export async function GET(request: NextRequest) {
     // Get user from database
     const user = await getUserByWalletAddress(walletAddress.toLowerCase());
     if (!user) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     // Get user's interaction logs

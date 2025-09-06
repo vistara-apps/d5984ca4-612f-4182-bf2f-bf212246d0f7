@@ -13,13 +13,13 @@ interface RecordButtonProps {
   className?: string;
 }
 
-export function RecordButton({ 
+export function RecordButton({
   variant = 'start',
   onStartRecording,
   onStopRecording,
   isRecording = false,
   recordingTime = 0,
-  className 
+  className,
 }: RecordButtonProps) {
   const [permissionDenied, setPermissionDenied] = useState(false);
 
@@ -50,14 +50,13 @@ export function RecordButton({
     return (
       <div className={cn('glass-card p-6 text-center', className)}>
         <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
-        <h3 className="text-lg font-semibold text-white mb-2">Permission Required</h3>
+        <h3 className="text-lg font-semibold text-white mb-2">
+          Permission Required
+        </h3>
         <p className="text-gray-300 mb-4">
           Please allow camera and microphone access to record interactions.
         </p>
-        <button
-          onClick={handleClick}
-          className="btn-primary"
-        >
+        <button onClick={handleClick} className="btn-primary">
           Try Again
         </button>
       </div>
@@ -72,7 +71,9 @@ export function RecordButton({
         </div>
         <div className="flex items-center justify-center space-x-2 mb-4">
           <Clock className="w-5 h-5 text-red-400" />
-          <span className="text-xl font-mono text-white">{formatTime(recordingTime)}</span>
+          <span className="text-xl font-mono text-white">
+            {formatTime(recordingTime)}
+          </span>
         </div>
         <p className="text-gray-300 mb-4">Recording in progress...</p>
         <button
@@ -94,9 +95,7 @@ export function RecordButton({
         <Mic className="w-8 h-8 text-white" />
       </button>
       <h3 className="text-lg font-semibold text-white mb-2">Start Recording</h3>
-      <p className="text-gray-300">
-        Tap to begin documenting your interaction
-      </p>
+      <p className="text-gray-300">Tap to begin documenting your interaction</p>
     </div>
   );
 }

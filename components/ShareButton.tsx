@@ -11,11 +11,16 @@ interface ShareButtonProps {
   className?: string;
 }
 
-export function ShareButton({ card, variant = 'withText', className }: ShareButtonProps) {
+export function ShareButton({
+  card,
+  variant = 'withText',
+  className,
+}: ShareButtonProps) {
   const [copied, setCopied] = useState(false);
   const [showShareMenu, setShowShareMenu] = useState(false);
 
-  const shareUrl = card.generated_url || `${window.location.origin}/share/${card.card_id}`;
+  const shareUrl =
+    card.generated_url || `${window.location.origin}/share/${card.card_id}`;
 
   const handleCopyLink = async () => {
     try {
@@ -71,7 +76,11 @@ export function ShareButton({ card, variant = 'withText', className }: ShareButt
               onClick={handleCopyLink}
               className="w-full flex items-center space-x-3 px-3 py-2 text-gray-800 hover:bg-gray-100 rounded-lg transition-all duration-200"
             >
-              {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+              {copied ? (
+                <Check className="w-4 h-4" />
+              ) : (
+                <Copy className="w-4 h-4" />
+              )}
               <span>{copied ? 'Copied!' : 'Copy Link'}</span>
             </button>
           </div>
@@ -83,10 +92,7 @@ export function ShareButton({ card, variant = 'withText', className }: ShareButt
   return (
     <button
       onClick={handleNativeShare}
-      className={cn(
-        'btn-secondary flex items-center space-x-2',
-        className
-      )}
+      className={cn('btn-secondary flex items-center space-x-2', className)}
     >
       <Share2 className="w-5 h-5" />
       <span>Share Summary</span>

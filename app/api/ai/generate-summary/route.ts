@@ -71,7 +71,9 @@ Keep the summary concise but comprehensive.`;
 
     // Extract title and summary from the generated text
     const lines = generatedText.split('\n').filter(line => line.trim());
-    const title = lines[0]?.replace(/^(Title:|Summary:)/i, '').trim() || `${interactionType.replace('_', ' ')} - ${new Date(timestamp).toLocaleDateString()}`;
+    const title =
+      lines[0]?.replace(/^(Title:|Summary:)/i, '').trim() ||
+      `${interactionType.replace('_', ' ')} - ${new Date(timestamp).toLocaleDateString()}`;
     const summary = lines.slice(1).join('\n').trim();
 
     // Generate relevant rights based on interaction type and state
@@ -104,7 +106,7 @@ Keep the summary concise but comprehensive.`;
     });
   } catch (error) {
     console.error('Generate summary error:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },

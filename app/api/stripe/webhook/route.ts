@@ -29,25 +29,21 @@ export async function POST(request: NextRequest) {
       event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
     } catch (err) {
       console.error('Webhook signature verification failed:', err);
-      return NextResponse.json(
-        { error: 'Invalid signature' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
     }
 
     // Handle the event
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
-        
+
         if (session.mode === 'subscription') {
           const walletAddress = session.metadata?.wallet_address;
           const customerId = session.customer as string;
 
           if (walletAddress) {
             // Update user subscription status
-            await (supabaseAdmin
-              .from('users') as any)
+            await (supabaseAdmin.from('users') as any)
               .update({
                 subscription_status: 'premium',
                 stripe_customer_id: customerId,
@@ -67,20 +63,25 @@ export async function POST(request: NextRequest) {
 
         // Get customer to find wallet address
         const customer = await stripe.customers.retrieve(customerId);
-        
-        if (customer && !customer.deleted && customer.metadata?.wallet_address) {
+
+        if (
+          customer &&
+          !customer.deleted &&
+          customer.metadata?.wallet_address
+        ) {
           const walletAddress = customer.metadata.wallet_address;
           const status = subscription.status === 'active' ? 'premium' : 'free';
 
-          await (supabaseAdmin
-            .from('users') as any)
+          await (supabaseAdmin.from('users') as any)
             .update({
               subscription_status: status,
               updated_at: new Date().toISOString(),
             })
             .eq('wallet_address', walletAddress);
 
-          console.log(`Updated subscription status to ${status} for wallet: ${walletAddress}`);
+          console.log(
+            `Updated subscription status to ${status} for wallet: ${walletAddress}`
+          );
         }
         break;
       }
@@ -91,12 +92,15 @@ export async function POST(request: NextRequest) {
 
         // Get customer to find wallet address
         const customer = await stripe.customers.retrieve(customerId);
-        
-        if (customer && !customer.deleted && customer.metadata?.wallet_address) {
+
+        if (
+          customer &&
+          !customer.deleted &&
+          customer.metadata?.wallet_address
+        ) {
           const walletAddress = customer.metadata.wallet_address;
 
-          await (supabaseAdmin
-            .from('users') as any)
+          await (supabaseAdmin.from('users') as any)
             .update({
               subscription_status: 'free',
               updated_at: new Date().toISOString(),
@@ -114,13 +118,16 @@ export async function POST(request: NextRequest) {
 
         // Get customer to find wallet address
         const customer = await stripe.customers.retrieve(customerId);
-        
-        if (customer && !customer.deleted && customer.metadata?.wallet_address) {
+
+        if (
+          customer &&
+          !customer.deleted &&
+          customer.metadata?.wallet_address
+        ) {
           const walletAddress = customer.metadata.wallet_address;
 
           // Optionally downgrade to free tier on payment failure
-          await (supabaseAdmin
-            .from('users') as any)
+          await (supabaseAdmin.from('users') as any)
             .update({
               subscription_status: 'free',
               updated_at: new Date().toISOString(),

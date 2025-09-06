@@ -17,11 +17,12 @@ const authSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { accessToken, walletAddress, selectedState } = authSchema.parse(body);
+    const { accessToken, walletAddress, selectedState } =
+      authSchema.parse(body);
 
     // Verify the access token with Privy
     const claims = await privy.verifyAuthToken(accessToken);
-    
+
     if (!claims) {
       return NextResponse.json(
         { error: 'Invalid access token' },
@@ -31,19 +32,16 @@ export async function POST(request: NextRequest) {
 
     // Get user data from Privy using the user ID from claims
     const privyUser = await privy.getUser(claims.userId);
-    
+
     if (!privyUser) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     // Check if wallet address matches one of the user's linked wallets
     const userWallet = privyUser.linkedAccounts
       ?.find(account => account.type === 'wallet')
       ?.address?.toLowerCase();
-    
+
     if (userWallet !== walletAddress.toLowerCase()) {
       return NextResponse.json(
         { error: 'Wallet address mismatch' },
@@ -64,7 +62,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Auth error:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
@@ -94,10 +92,7 @@ export async function GET(request: NextRequest) {
     const user = await getUserByWalletAddress(walletAddress.toLowerCase());
 
     if (!user) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     return NextResponse.json({
@@ -106,9 +101,6 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('Get user error:', error);
-    return NextResponse.json(
-      { error: 'Failed to get user' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to get user' }, { status: 500 });
   }
 }

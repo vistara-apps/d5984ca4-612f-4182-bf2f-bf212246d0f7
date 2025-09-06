@@ -19,7 +19,8 @@ export default function Error({
           Something went wrong!
         </h2>
         <p className="text-gray-300 mb-6">
-          We encountered an error while loading your rights information. Please try again.
+          We encountered an error while loading your rights information. Please
+          try again.
         </p>
         <button
           onClick={reset}

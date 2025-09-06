@@ -22,11 +22,12 @@ const createCheckoutSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { accessToken, walletAddress, priceId } = createCheckoutSchema.parse(body);
+    const { accessToken, walletAddress, priceId } =
+      createCheckoutSchema.parse(body);
 
     // Verify the access token with Privy
     const claims = await privy.verifyAuthToken(accessToken);
-    
+
     if (!claims) {
       return NextResponse.json(
         { error: 'Invalid access token' },
@@ -36,19 +37,16 @@ export async function POST(request: NextRequest) {
 
     // Get user data from Privy using the user ID from claims
     const privyUser = await privy.getUser(claims.userId);
-    
+
     if (!privyUser) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     // Check if wallet address matches one of the user's linked wallets
     const userWallet = privyUser.linkedAccounts
       ?.find(account => account.type === 'wallet')
       ?.address?.toLowerCase();
-    
+
     if (userWallet !== walletAddress.toLowerCase()) {
       return NextResponse.json(
         { error: 'Wallet address mismatch' },
@@ -59,15 +57,12 @@ export async function POST(request: NextRequest) {
     // Get user from database
     const user = await getUserByWalletAddress(walletAddress.toLowerCase());
     if (!user) {
-      return NextResponse.json(
-        { error: 'User not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     // Create or retrieve Stripe customer
     let customerId = user.stripe_customer_id;
-    
+
     if (!customerId) {
       const customer = await stripe.customers.create({
         metadata: {
@@ -79,7 +74,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Default price ID for premium subscription ($5/month)
-    const defaultPriceId = priceId || process.env.STRIPE_PREMIUM_PRICE_ID || 'price_premium_monthly';
+    const defaultPriceId =
+      priceId || process.env.STRIPE_PREMIUM_PRICE_ID || 'price_premium_monthly';
 
     // Create checkout session
     const session = await stripe.checkout.sessions.create({
@@ -107,7 +103,7 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error('Create checkout error:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },

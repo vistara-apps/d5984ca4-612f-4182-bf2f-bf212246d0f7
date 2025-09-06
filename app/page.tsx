@@ -12,27 +12,37 @@ import { InputField } from '@/components/InputFields';
 import { useMiniKit } from '@coinbase/onchainkit/minikit';
 import { US_STATES, INTERACTION_TYPES } from '@/lib/constants';
 import { Language, InteractionType } from '@/lib/types';
-import { Shield, FileText, Mic, Settings2, Star, Users, TrendingUp, ArrowRight } from 'lucide-react';
+import {
+  Shield,
+  FileText,
+  Mic,
+  Settings2,
+  Star,
+  Users,
+  TrendingUp,
+  ArrowRight,
+} from 'lucide-react';
 import Link from 'next/link';
 
 export default function HomePage() {
   const { setFrameReady } = useMiniKit();
-  const { 
-    user, 
-    selectedState, 
-    currentLanguage, 
-    stateGuides, 
-    dispatch, 
-    createInteraction 
+  const {
+    user,
+    selectedState,
+    currentLanguage,
+    stateGuides,
+    dispatch,
+    createInteraction,
   } = useApp();
   const { authenticated, login } = usePrivy();
-  
+
   const [showStateModal, setShowStateModal] = useState(false);
   const [showRecordModal, setShowRecordModal] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const [interactionNotes, setInteractionNotes] = useState('');
-  const [interactionType, setInteractionType] = useState<InteractionType>('traffic_stop');
+  const [interactionType, setInteractionType] =
+    useState<InteractionType>('traffic_stop');
   const [location, setLocation] = useState('');
 
   useEffect(() => {
@@ -49,8 +59,8 @@ export default function HomePage() {
     return () => clearInterval(interval);
   }, [isRecording]);
 
-  const currentGuide = stateGuides.find(guide => 
-    guide.state_name.toLowerCase() === selectedState.toLowerCase()
+  const currentGuide = stateGuides.find(
+    guide => guide.state_name.toLowerCase() === selectedState.toLowerCase()
   );
 
   const handleStartRecording = () => {
@@ -60,7 +70,7 @@ export default function HomePage() {
 
   const handleStopRecording = async () => {
     setIsRecording(false);
-    
+
     if (authenticated && user) {
       await createInteraction({
         timestamp: new Date().toISOString(),
@@ -69,7 +79,7 @@ export default function HomePage() {
         interaction_type: interactionType,
       });
     }
-    
+
     // Reset form
     setInteractionNotes('');
     setLocation('');
@@ -93,7 +103,7 @@ export default function HomePage() {
         <p className="text-gray-300 mb-6">
           Know your rights, document your interactions, instantly.
         </p>
-        
+
         <div className="flex justify-center space-x-4 mb-6">
           {!authenticated ? (
             <button onClick={login} className="btn-primary">
@@ -105,7 +115,7 @@ export default function HomePage() {
                 Dashboard
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Link>
-              <button 
+              <button
                 onClick={() => setShowStateModal(true)}
                 className="btn-secondary"
               >
@@ -117,7 +127,8 @@ export default function HomePage() {
 
         {!authenticated && (
           <p className="text-sm text-gray-400">
-            Connect your wallet to access personalized features and save your interactions
+            Connect your wallet to access personalized features and save your
+            interactions
           </p>
         )}
       </div>
@@ -128,7 +139,9 @@ export default function HomePage() {
           <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center mx-auto mb-3">
             <Shield className="w-6 h-6 text-white" />
           </div>
-          <h3 className="text-lg font-semibold text-white mb-1">State Strict Rights</h3>
+          <h3 className="text-lg font-semibold text-white mb-1">
+            State Strict Rights
+          </h3>
           <p className="text-2xl font-bold text-white">30,28</p>
           <p className="text-sm text-gray-300">rights rights</p>
         </div>
@@ -137,14 +150,20 @@ export default function HomePage() {
           <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-teal-500 rounded-lg flex items-center justify-center mx-auto mb-3">
             <TrendingUp className="w-6 h-6 text-white" />
           </div>
-          <h3 className="text-lg font-semibold text-white mb-1">Record Rights.com</h3>
+          <h3 className="text-lg font-semibold text-white mb-1">
+            Record Rights.com
+          </h3>
           <p className="text-2xl font-bold text-white">20%</p>
           <p className="text-sm text-gray-300">Accuracy</p>
         </div>
 
         <div className="glass-card p-4">
-          <h4 className="font-medium text-white mb-3">State specific rights guide</h4>
-          <p className="text-sm text-gray-300 mb-3">Traffic violations, stop interactions</p>
+          <h4 className="font-medium text-white mb-3">
+            State specific rights guide
+          </h4>
+          <p className="text-sm text-gray-300 mb-3">
+            Traffic violations, stop interactions
+          </p>
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-300">Client by brass for</span>
@@ -166,8 +185,8 @@ export default function HomePage() {
       <div className="space-y-6">
         {/* Rights Guide */}
         {currentGuide && (
-          <StateGuideCard 
-            guide={currentGuide} 
+          <StateGuideCard
+            guide={currentGuide}
             variant="detailed"
             className="animate-fade-in"
           />
@@ -187,15 +206,17 @@ export default function HomePage() {
               onLanguageToggle={handleLanguageToggle}
             />
           </div>
-          
+
           <div className="space-y-3">
-            {currentGuide?.content.scripts[currentLanguage].map((script, index) => (
-              <ScriptButton
-                key={index}
-                script={script}
-                variant={index === 0 ? 'primary' : 'secondary'}
-              />
-            ))}
+            {currentGuide?.content.scripts[currentLanguage].map(
+              (script, index) => (
+                <ScriptButton
+                  key={index}
+                  script={script}
+                  variant={index === 0 ? 'primary' : 'secondary'}
+                />
+              )
+            )}
           </div>
         </div>
 
@@ -216,7 +237,7 @@ export default function HomePage() {
         variant="drawer"
       >
         <div className="space-y-3 max-h-64 overflow-y-auto">
-          {US_STATES.map((state) => (
+          {US_STATES.map(state => (
             <button
               key={state}
               onClick={() => handleStateChange(state.toLowerCase())}
@@ -244,10 +265,10 @@ export default function HomePage() {
             variant="select"
             label="Interaction Type"
             value={interactionType}
-            onChange={(value) => setInteractionType(value as InteractionType)}
+            onChange={value => setInteractionType(value as InteractionType)}
             options={INTERACTION_TYPES}
           />
-          
+
           <InputField
             variant="locationPicker"
             label="Location"
@@ -255,7 +276,7 @@ export default function HomePage() {
             onChange={setLocation}
             placeholder="Enter location or use GPS"
           />
-          
+
           <InputField
             variant="textarea"
             label="Notes"
@@ -263,7 +284,7 @@ export default function HomePage() {
             onChange={setInteractionNotes}
             placeholder="Add any additional details..."
           />
-          
+
           <div className="flex space-x-3">
             <button
               onClick={() => setShowRecordModal(false)}

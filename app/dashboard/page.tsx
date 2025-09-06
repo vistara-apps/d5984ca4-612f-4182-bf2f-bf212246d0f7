@@ -9,32 +9,32 @@ import { Modal } from '@/components/Modal';
 import { InputField } from '@/components/InputFields';
 import { US_STATES, INTERACTION_TYPES } from '@/lib/constants';
 import { InteractionType } from '@/lib/types';
-import { 
-  Shield, 
-  FileText, 
-  Clock, 
-  MapPin, 
-  Star, 
+import {
+  Shield,
+  FileText,
+  Clock,
+  MapPin,
+  Star,
   TrendingUp,
   Settings,
   CreditCard,
   History,
-  Plus
+  Plus,
 } from 'lucide-react';
 import { format } from 'date-fns';
 
 export default function DashboardPage() {
-  const { 
-    user, 
-    selectedState, 
-    stateGuides, 
-    userInteractions, 
-    dispatch, 
+  const {
+    user,
+    selectedState,
+    stateGuides,
+    userInteractions,
+    dispatch,
     createInteraction,
-    upgradeToPremium 
+    upgradeToPremium,
   } = useApp();
   const { authenticated, login } = usePrivy();
-  
+
   const [showStateModal, setShowStateModal] = useState(false);
   const [showNewInteractionModal, setShowNewInteractionModal] = useState(false);
   const [interactionForm, setInteractionForm] = useState({
@@ -55,8 +55,12 @@ export default function DashboardPage() {
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
             <Shield className="w-16 h-16 text-purple-500 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-white mb-2">Welcome to Pocket Rights</h2>
-            <p className="text-gray-300 mb-6">Connect your wallet to access your dashboard</p>
+            <h2 className="text-2xl font-bold text-white mb-2">
+              Welcome to Pocket Rights
+            </h2>
+            <p className="text-gray-300 mb-6">
+              Connect your wallet to access your dashboard
+            </p>
             <button onClick={login} className="btn-primary">
               Connect Wallet
             </button>
@@ -66,8 +70,8 @@ export default function DashboardPage() {
     );
   }
 
-  const currentGuide = stateGuides.find(guide => 
-    guide.state_name.toLowerCase() === selectedState.toLowerCase()
+  const currentGuide = stateGuides.find(
+    guide => guide.state_name.toLowerCase() === selectedState.toLowerCase()
   );
 
   const handleStateChange = (state: string) => {
@@ -106,7 +110,7 @@ export default function DashboardPage() {
             Welcome back! Stay informed about your rights in {selectedState}.
           </p>
         </div>
-        
+
         <div className="flex items-center space-x-3">
           <button
             onClick={() => setShowStateModal(true)}
@@ -115,7 +119,7 @@ export default function DashboardPage() {
             <MapPin className="w-4 h-4 mr-2" />
             {selectedState}
           </button>
-          
+
           {!isPremium && (
             <button
               onClick={upgradeToPremium}
@@ -134,7 +138,9 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-300">Total Interactions</p>
-              <p className="text-2xl font-bold text-white">{userInteractions.length}</p>
+              <p className="text-2xl font-bold text-white">
+                {userInteractions.length}
+              </p>
             </div>
             <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
               <History className="w-6 h-6 text-white" />
@@ -146,10 +152,16 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-300">Subscription</p>
-              <p className="text-2xl font-bold text-white capitalize">{user.subscription_status}</p>
+              <p className="text-2xl font-bold text-white capitalize">
+                {user.subscription_status}
+              </p>
             </div>
             <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-teal-500 rounded-lg flex items-center justify-center">
-              {isPremium ? <Star className="w-6 h-6 text-white" /> : <CreditCard className="w-6 h-6 text-white" />}
+              {isPremium ? (
+                <Star className="w-6 h-6 text-white" />
+              ) : (
+                <CreditCard className="w-6 h-6 text-white" />
+              )}
             </div>
           </div>
         </div>
@@ -158,7 +170,9 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-gray-300">Rights Guides</p>
-              <p className="text-2xl font-bold text-white">{stateGuides.length}</p>
+              <p className="text-2xl font-bold text-white">
+                {stateGuides.length}
+              </p>
             </div>
             <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
               <Shield className="w-6 h-6 text-white" />
@@ -171,9 +185,12 @@ export default function DashboardPage() {
             <div>
               <p className="text-sm text-gray-300">This Month</p>
               <p className="text-2xl font-bold text-white">
-                {userInteractions.filter(i => 
-                  new Date(i.timestamp).getMonth() === new Date().getMonth()
-                ).length}
+                {
+                  userInteractions.filter(
+                    i =>
+                      new Date(i.timestamp).getMonth() === new Date().getMonth()
+                  ).length
+                }
               </p>
             </div>
             <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center justify-center">
@@ -189,7 +206,9 @@ export default function DashboardPage() {
           {/* Current State Guide */}
           {currentGuide && (
             <div>
-              <h2 className="text-xl font-semibold text-white mb-4">Your Rights in {selectedState}</h2>
+              <h2 className="text-xl font-semibold text-white mb-4">
+                Your Rights in {selectedState}
+              </h2>
               <StateGuideCard guide={currentGuide} variant="detailed" />
             </div>
           )}
@@ -197,7 +216,9 @@ export default function DashboardPage() {
           {/* Recent Interactions */}
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-semibold text-white">Recent Interactions</h2>
+              <h2 className="text-xl font-semibold text-white">
+                Recent Interactions
+              </h2>
               <button
                 onClick={() => setShowNewInteractionModal(true)}
                 className="btn-primary flex items-center"
@@ -206,10 +227,10 @@ export default function DashboardPage() {
                 Log Interaction
               </button>
             </div>
-            
+
             {recentInteractions.length > 0 ? (
               <div className="space-y-3">
-                {recentInteractions.map((interaction) => (
+                {recentInteractions.map(interaction => (
                   <div key={interaction.log_id} className="glass-card p-4">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
@@ -218,16 +239,19 @@ export default function DashboardPage() {
                             {interaction.interaction_type.replace('_', ' ')}
                           </span>
                           <span className="text-xs text-gray-400">
-                            {format(new Date(interaction.timestamp), 'MMM d, yyyy h:mm a')}
+                            {format(
+                              new Date(interaction.timestamp),
+                              'MMM d, yyyy h:mm a'
+                            )}
                           </span>
                         </div>
-                        
+
                         {interaction.location && (
                           <p className="text-sm text-gray-300 mb-1">
                             📍 {interaction.location}
                           </p>
                         )}
-                        
+
                         {interaction.notes && (
                           <p className="text-sm text-gray-300">
                             {interaction.notes.substring(0, 100)}
@@ -235,7 +259,7 @@ export default function DashboardPage() {
                           </p>
                         )}
                       </div>
-                      
+
                       <Clock className="w-4 h-4 text-gray-400 ml-4" />
                     </div>
                   </div>
@@ -244,9 +268,12 @@ export default function DashboardPage() {
             ) : (
               <div className="glass-card p-8 text-center">
                 <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-white mb-2">No interactions yet</h3>
+                <h3 className="text-lg font-medium text-white mb-2">
+                  No interactions yet
+                </h3>
                 <p className="text-gray-300 mb-4">
-                  Start logging your interactions to keep track of important encounters.
+                  Start logging your interactions to keep track of important
+                  encounters.
                 </p>
                 <button
                   onClick={() => setShowNewInteractionModal(true)}
@@ -263,12 +290,16 @@ export default function DashboardPage() {
         <div className="space-y-6">
           {/* Subscription Status */}
           <div className="glass-card p-6">
-            <h3 className="text-lg font-semibold text-white mb-4">Subscription</h3>
+            <h3 className="text-lg font-semibold text-white mb-4">
+              Subscription
+            </h3>
             <div className="text-center">
               {isPremium ? (
                 <>
                   <Star className="w-12 h-12 text-yellow-500 mx-auto mb-3" />
-                  <p className="text-lg font-medium text-white mb-2">Premium Member</p>
+                  <p className="text-lg font-medium text-white mb-2">
+                    Premium Member
+                  </p>
                   <p className="text-sm text-gray-300">
                     Unlimited interactions, AI scripts, and priority support
                   </p>
@@ -276,7 +307,9 @@ export default function DashboardPage() {
               ) : (
                 <>
                   <Shield className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-                  <p className="text-lg font-medium text-white mb-2">Free Plan</p>
+                  <p className="text-lg font-medium text-white mb-2">
+                    Free Plan
+                  </p>
                   <p className="text-sm text-gray-300 mb-4">
                     Basic rights information and limited documentation
                   </p>
@@ -293,7 +326,9 @@ export default function DashboardPage() {
 
           {/* Quick Actions */}
           <div className="glass-card p-6">
-            <h3 className="text-lg font-semibold text-white mb-4">Quick Actions</h3>
+            <h3 className="text-lg font-semibold text-white mb-4">
+              Quick Actions
+            </h3>
             <div className="space-y-3">
               <button
                 onClick={() => setShowNewInteractionModal(true)}
@@ -302,7 +337,7 @@ export default function DashboardPage() {
                 <Plus className="w-4 h-4 mr-3" />
                 Log New Interaction
               </button>
-              
+
               <button
                 onClick={() => setShowStateModal(true)}
                 className="w-full btn-secondary text-left flex items-center"
@@ -310,7 +345,7 @@ export default function DashboardPage() {
                 <MapPin className="w-4 h-4 mr-3" />
                 Change State
               </button>
-              
+
               <button className="w-full btn-secondary text-left flex items-center">
                 <Settings className="w-4 h-4 mr-3" />
                 Settings
@@ -328,7 +363,7 @@ export default function DashboardPage() {
         variant="drawer"
       >
         <div className="space-y-3 max-h-64 overflow-y-auto">
-          {US_STATES.map((state) => (
+          {US_STATES.map(state => (
             <button
               key={state}
               onClick={() => handleStateChange(state)}
@@ -356,29 +391,35 @@ export default function DashboardPage() {
             variant="select"
             label="Interaction Type"
             value={interactionForm.interaction_type}
-            onChange={(value) => setInteractionForm(prev => ({ 
-              ...prev, 
-              interaction_type: value as InteractionType 
-            }))}
+            onChange={value =>
+              setInteractionForm(prev => ({
+                ...prev,
+                interaction_type: value as InteractionType,
+              }))
+            }
             options={INTERACTION_TYPES}
           />
-          
+
           <InputField
             variant="text"
             label="Location"
             value={interactionForm.location}
-            onChange={(value) => setInteractionForm(prev => ({ ...prev, location: value }))}
+            onChange={value =>
+              setInteractionForm(prev => ({ ...prev, location: value }))
+            }
             placeholder="Enter location (optional)"
           />
-          
+
           <InputField
             variant="textarea"
             label="Notes"
             value={interactionForm.notes}
-            onChange={(value) => setInteractionForm(prev => ({ ...prev, notes: value }))}
+            onChange={value =>
+              setInteractionForm(prev => ({ ...prev, notes: value }))
+            }
             placeholder="Add any additional details..."
           />
-          
+
           <div className="flex space-x-3">
             <button
               onClick={() => setShowNewInteractionModal(false)}

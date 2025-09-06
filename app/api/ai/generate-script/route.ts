@@ -22,7 +22,8 @@ const generateScriptSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { scenario, state, language, context } = generateScriptSchema.parse(body);
+    const { scenario, state, language, context } =
+      generateScriptSchema.parse(body);
 
     const systemPrompt = `You are a legal rights assistant that generates clear, concise scripts for individuals during law enforcement interactions. Your responses must be:
 
@@ -59,7 +60,12 @@ ${language === 'spanish' ? 'Respond in Spanish.' : 'Respond in English.'}`;
     const scripts = generatedText
       .split('\n')
       .filter(line => line.trim() && !line.includes(':'))
-      .map(line => line.replace(/^\d+\.\s*/, '').replace(/^-\s*/, '').trim())
+      .map(line =>
+        line
+          .replace(/^\d+\.\s*/, '')
+          .replace(/^-\s*/, '')
+          .trim()
+      )
       .filter(script => script.length > 0);
 
     return NextResponse.json({
@@ -71,7 +77,7 @@ ${language === 'spanish' ? 'Respond in Spanish.' : 'Respond in English.'}`;
     });
   } catch (error) {
     console.error('Generate script error:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },

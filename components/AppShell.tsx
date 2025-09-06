@@ -20,7 +20,7 @@ export function AppShell({ children, className }: AppShellProps) {
         <div className="shape shape-5"></div>
         <div className="shape shape-6"></div>
       </div>
-      
+
       {/* Main content */}
       <div className="relative z-10">
         <div className="container mx-auto px-4 py-8 max-w-screen-sm">

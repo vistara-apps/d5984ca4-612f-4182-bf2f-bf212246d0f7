@@ -13,13 +13,13 @@ interface ModalProps {
   className?: string;
 }
 
-export function Modal({ 
-  isOpen, 
-  onClose, 
-  children, 
+export function Modal({
+  isOpen,
+  onClose,
+  children,
   variant = 'dialog',
   title,
-  className 
+  className,
 }: ModalProps) {
   useEffect(() => {
     if (isOpen) {
@@ -38,14 +38,16 @@ export function Modal({
   if (variant === 'drawer') {
     return (
       <div className="fixed inset-0 z-50">
-        <div 
+        <div
           className="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm"
           onClick={onClose}
         />
-        <div className={cn(
-          'absolute bottom-0 left-0 right-0 bg-white bg-opacity-95 backdrop-blur-lg rounded-t-xl p-6 animate-slide-up',
-          className
-        )}>
+        <div
+          className={cn(
+            'absolute bottom-0 left-0 right-0 bg-white bg-opacity-95 backdrop-blur-lg rounded-t-xl p-6 animate-slide-up',
+            className
+          )}
+        >
           {title && (
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
@@ -65,14 +67,16 @@ export function Modal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div 
+      <div
         className="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm"
         onClick={onClose}
       />
-      <div className={cn(
-        'relative bg-white bg-opacity-95 backdrop-blur-lg rounded-xl p-6 w-full max-w-md animate-fade-in',
-        className
-      )}>
+      <div
+        className={cn(
+          'relative bg-white bg-opacity-95 backdrop-blur-lg rounded-xl p-6 w-full max-w-md animate-fade-in',
+          className
+        )}
+      >
         {title && (
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold text-gray-900">{title}</h2>

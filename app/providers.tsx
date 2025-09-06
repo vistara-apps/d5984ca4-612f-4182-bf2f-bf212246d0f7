@@ -12,7 +12,7 @@ const queryClient = new QueryClient();
 
 export function Providers({ children }: { children: ReactNode }) {
   const privyAppId = process.env.NEXT_PUBLIC_PRIVY_APP_ID;
-  
+
   // If no Privy app ID is available (e.g., during build), provide a fallback
   if (!privyAppId) {
     return (

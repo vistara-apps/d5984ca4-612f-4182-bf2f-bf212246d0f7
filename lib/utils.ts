@@ -12,7 +12,10 @@ export function generateShareableUrl(cardId: string): string {
   return `${window.location.origin}/share/${cardId}`;
 }
 
-export function getCurrentLocation(): Promise<{ latitude: number; longitude: number }> {
+export function getCurrentLocation(): Promise<{
+  latitude: number;
+  longitude: number;
+}> {
   return new Promise((resolve, reject) => {
     if (!navigator.geolocation) {
       reject(new Error('Geolocation is not supported'));
@@ -20,13 +23,13 @@ export function getCurrentLocation(): Promise<{ latitude: number; longitude: num
     }
 
     navigator.geolocation.getCurrentPosition(
-      (position) => {
+      position => {
         resolve({
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
         });
       },
-      (error) => {
+      error => {
         reject(error);
       }
     );

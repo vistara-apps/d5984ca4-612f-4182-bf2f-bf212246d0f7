@@ -1,6 +1,12 @@
 'use client';
 
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useReducer,
+  useEffect,
+  useCallback,
+} from 'react';
 import { usePrivy } from '@privy-io/react-auth';
 import { User, StateRightsGuide, InteractionLog } from '@/lib/types';
 import toast from 'react-hot-toast';
@@ -89,6 +95,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     } else {
       dispatch({ type: 'SET_USER', payload: null });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authenticated, privyUser]);
 
   // Load state guides on mount
@@ -96,7 +103,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     loadStateGuides();
   }, []);
 
-  const authenticateUser = async () => {
+  const authenticateUser = useCallback(async () => {
     try {
       dispatch({ type: 'SET_LOADING', payload: true });
       dispatch({ type: 'SET_ERROR', payload: null });
@@ -129,21 +136,28 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       }
 
       dispatch({ type: 'SET_USER', payload: data.user });
-      
+
       if (data.user.selected_state) {
-        dispatch({ type: 'SET_SELECTED_STATE', payload: data.user.selected_state });
+        dispatch({
+          type: 'SET_SELECTED_STATE',
+          payload: data.user.selected_state,
+        });
       }
 
       // Load user interactions
       await loadUserInteractions(accessToken, privyUser.wallet.address);
     } catch (error) {
       console.error('Authentication error:', error);
-      dispatch({ type: 'SET_ERROR', payload: error instanceof Error ? error.message : 'Authentication failed' });
+      dispatch({
+        type: 'SET_ERROR',
+        payload:
+          error instanceof Error ? error.message : 'Authentication failed',
+      });
       toast.error('Authentication failed');
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
     }
-  };
+  }, [privyUser, getAccessToken, state.selectedState]);
 
   const loadStateGuides = async () => {
     try {
@@ -158,13 +172,19 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const loadUserInteractions = async (accessToken: string, walletAddress: string) => {
+  const loadUserInteractions = async (
+    accessToken: string,
+    walletAddress: string
+  ) => {
     try {
-      const response = await fetch(`/api/interactions?walletAddress=${walletAddress}`, {
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-        },
-      });
+      const response = await fetch(
+        `/api/interactions?walletAddress=${walletAddress}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
 
       const data = await response.json();
 
@@ -213,7 +233,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
       dispatch({ type: 'ADD_INTERACTION', payload: data.interaction });
       toast.success('Interaction logged successfully');
-      
+
       return data.interaction;
     } catch (error) {
       console.error('Create interaction error:', error);
@@ -222,7 +242,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const generateScript = async (scenario: string, context?: string): Promise<string[]> => {
+  const generateScript = async (
+    scenario: string,
+    context?: string
+  ): Promise<string[]> => {
     try {
       const response = await fetch('/api/ai/generate-script', {
         method: 'POST',
@@ -253,7 +276,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   const generateSummary = async (interactionId: string) => {
     try {
-      const interaction = state.userInteractions.find(i => i.log_id === interactionId);
+      const interaction = state.userInteractions.find(
+        i => i.log_id === interactionId
+      );
       if (!interaction) {
         throw new Error('Interaction not found');
       }
@@ -337,9 +362,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AppContext.Provider value={contextValue}>
-      {children}
-    </AppContext.Provider>
+    <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>
   );
 }
 

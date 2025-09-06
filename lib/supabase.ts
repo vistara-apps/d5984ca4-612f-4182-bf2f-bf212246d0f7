@@ -26,20 +26,18 @@ export const supabaseAdmin = (() => {
     // Return a mock client for build time
     return null as any;
   }
-  return createClient<Database>(
-    supabaseUrl,
-    supabaseServiceKey,
-    {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
-      },
-    }
-  );
+  return createClient<Database>(supabaseUrl, supabaseServiceKey, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  });
 })();
 
 // Helper function to get user from wallet address
-export async function getUserByWalletAddress(walletAddress: string): Promise<Database['public']['Tables']['users']['Row'] | null> {
+export async function getUserByWalletAddress(
+  walletAddress: string
+): Promise<Database['public']['Tables']['users']['Row'] | null> {
   const { data, error } = await supabaseAdmin
     .from('users')
     .select('*')
@@ -60,8 +58,7 @@ export async function upsertUser(userData: {
   subscription_status?: 'free' | 'premium';
   stripe_customer_id?: string;
 }) {
-  const { data, error } = await (supabaseAdmin
-    .from('users') as any)
+  const { data, error } = await (supabaseAdmin.from('users') as any)
     .upsert(userData, {
       onConflict: 'wallet_address',
     })
@@ -113,8 +110,7 @@ export async function createInteractionLog(logData: {
   notes?: string;
   interaction_type: 'traffic_stop' | 'search' | 'arrest' | 'other';
 }) {
-  const { data, error } = await (supabaseAdmin
-    .from('interaction_logs') as any)
+  const { data, error } = await (supabaseAdmin.from('interaction_logs') as any)
     .insert(logData)
     .select()
     .single();
@@ -154,8 +150,7 @@ export async function createShareableCard(cardData: {
   };
   generated_url?: string;
 }) {
-  const { data, error } = await (supabaseAdmin
-    .from('shareable_cards') as any)
+  const { data, error } = await (supabaseAdmin.from('shareable_cards') as any)
     .insert(cardData)
     .select()
     .single();

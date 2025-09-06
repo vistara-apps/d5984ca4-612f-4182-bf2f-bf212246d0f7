@@ -42,7 +42,7 @@ ${shareableUrl}`;
     });
   } catch (error) {
     console.error('Share to Farcaster error:', error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },

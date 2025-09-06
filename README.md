@@ -5,12 +5,14 @@ A mobile-first application for individuals to quickly access state-specific lega
 ## 🛡️ Features
 
 ### Core Features
+
 - **State-Specific Rights Guides**: One-page, mobile-optimized guides detailing user rights during police stops, tailored to specific US states
 - **"Do's and Don'ts" Scripts**: Pre-written, easily shareable scripts in English and Spanish for common law enforcement interaction scenarios
 - **One-Tap Incident Recording**: Quick-access button to instantly start audio/video recording or log basic interaction details
 - **Shareable Interaction Summary**: Auto-generates concise, shareable summary cards with key interaction details
 
 ### Premium Features
+
 - Unlimited interaction logging
 - AI-powered custom script generation
 - Advanced shareable cards with legal references
@@ -152,32 +154,39 @@ Open [http://localhost:3000](http://localhost:3000) to see the application.
 ## 🔧 API Endpoints
 
 ### Authentication
+
 - `POST /api/auth` - Authenticate user with Privy
 - `GET /api/auth` - Get user by wallet address
 
 ### Rights Guides
+
 - `GET /api/rights-guides` - Get all state rights guides
 - `GET /api/rights-guides?state=California` - Get specific state guide
 
 ### Interactions
+
 - `POST /api/interactions` - Create new interaction log
 - `GET /api/interactions` - Get user's interaction logs
 
 ### AI Features
+
 - `POST /api/ai/generate-script` - Generate custom scripts
 - `POST /api/ai/generate-summary` - Generate interaction summaries
 
 ### Payments
+
 - `POST /api/stripe/create-checkout` - Create Stripe checkout session
 - `POST /api/stripe/webhook` - Handle Stripe webhooks
 
 ### Social
+
 - `POST /api/farcaster/share` - Share to Farcaster
 - `GET /api/farcaster/share` - Get Frame metadata
 
 ## 🎨 Design System
 
 The app uses a custom design system with:
+
 - **Colors**: Dark theme with purple/pink accents
 - **Typography**: Responsive text scales
 - **Components**: Glass morphism cards, gradient buttons
@@ -210,6 +219,7 @@ The app uses a custom design system with:
 ### Other Platforms
 
 The app can be deployed to any platform that supports Next.js:
+
 - Netlify
 - Railway
 - DigitalOcean App Platform
@@ -230,6 +240,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 🆘 Support
 
 For support, please:
+
 1. Check the documentation
 2. Search existing issues
 3. Create a new issue with detailed information
